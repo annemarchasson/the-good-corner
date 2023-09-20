@@ -85,19 +85,19 @@ app.post("/ads", (req: Request, res: Response) => {
 
 // Route ajouter un annonce
 app.post("/ads", (req: Request, res: Response) => {
-    //pour incrémenter et ajouter un id
-     const id = ads.length + 1; 
+    
      // … spread opérateur, reprend toutes les propriétés + id dans le nouvel objet + une date de création
-     const newAd = { ...req.body, id, createdAt: new Date().toISOString() };
+     const newAd = { ...req.body, createdAt: new Date().toISOString() };
 
      //avec sql   (requete sécurisée/préparée sans les ?)
-     db.run ( "INSERT INTO ad (title, description, owner, price, picture, localisation) VALUES ($title, $description, $owner, $price, $picture, $localisation)" , {
+     db.run ( "INSERT INTO ad (title, description, owner, price, picture, localisation, createdAt) VALUES ($title, $description, $owner, $price, $picture, $localisation, $createdAt)" , {
         $title: req.body.title,
         $description: req.body.description,
         $owner: req.body.owner,
         $price: req.body.price,
         $picture: req.body.picture,
         $localisation: req.body.localisation,
+        $createdAt: req.body.createdAt,
         });
         
      // Renvoie la nouvelle annonce en réponse
@@ -140,3 +140,86 @@ app.patch("/ads/:id", (req: Request, res: Response) => {
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
+
+
+/*
+correction sqlite
+app.post("/ads", (req: Request, res: Response) => {
+  const newAd: Ad = {
+    ...req.body,
+    createdAt: new Date().toISOString(),
+  };
+
+  db.run(
+    "INSERT INTO ad (title, owner, description, price, picture, location, createdAt) VALUES ($title, $owner, $description, $price, $picture, $location, $createdAt)",
+    {
+      $title: req.body.title,
+      $owner: req.body.owner,
+      $description: req.body.description,
+      $price: req.body.price,
+      $picture: req.body.picture,
+      $location: req.body.location,
+      $createdAt: newAd.createdAt,
+    },
+    function (this: any, err: any) {
+      if (!err)
+        return res.send({
+          ...newAd,
+          id: this.lastID,
+        });
+      console.log(err);
+      res.sendStatus(500);
+    }
+  );
+});
+
+app.delete("/ads/:id", (req: Request, res: Response) => {
+  db.get("SELECT * FROM ad WHERE id = ?", [req.params.id], (err, row) => {
+    if (err) {
+      console.log(err);
+      return res.sendStatus(500);
+    }
+    if (!row) return res.sendStatus(404);
+    db.run("DELETE FROM ad WHERE id = ?", [req.params.id], (err: any) => {
+      if (!err) return res.sendStatus(204);
+      console.log(err);
+      res.sendStatus(500);
+    });
+  });
+});
+
+app.patch("/ads/:id", (req: Request, res: Response) => {
+  db.get("SELECT * FROM ad WHERE id = ?", [req.params.id], (err, row) => {
+    if (err) {
+      console.log(err);
+      return res.sendStatus(500);
+    }
+    if (!row) return res.sendStatus(404);
+
+    // creates a string with this shape : "title = $title, description = $description, ..."
+    const setProps = Object.keys(req.body)
+      .reduce<string[]>((acc, prop) => [...acc, `${prop} = $${prop}`], [])
+      .join(", ");
+
+    // creates an object with this shape : {$title: "title sent by client", "$description: " description sent by client", ...}
+    const propsToUpdate = Object.keys(req.body).reduce(
+      (acc, prop) => ({ ...acc, [`$${prop}`]: req.body[prop] }),
+      {}
+    );
+
+    db.run(
+      `UPDATE ad SET ${setProps} WHERE id = $id`,
+      { ...propsToUpdate, $id: req.params.id },
+      (err: any) => {
+        if (!err) return res.send({ ...row, ...req.body });
+        console.log(err);
+        res.sendStatus(500);
+      }
+    );
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+*/
