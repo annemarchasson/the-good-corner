@@ -1,5 +1,7 @@
 // Importation Express.js et types Request/Response depuis package express
 import express, { Request, Response } from "express";
+import sqlite3 from "sqlite3";
+const db = new sqlite3.Database('good_corner');
 // application Express
 const app = express();
 // numéro de port (3000)
@@ -55,11 +57,20 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Route afficher les ads annonces
-app.get("/ads", (req: Request, res: Response) => {
+/* app.get("/ads", (req: Request, res: Response) => {
     res.send(ads);
 });
+ */
 
-// Route ajouter un annonce
+//Route Afficher ads
+app.get("/ads", (req, res) => {
+    db.all("SELECT * FROM ad", (err, rows) => {
+      if (!err) res.send(rows);
+      else res.sendStatus(500);
+    })
+  });
+
+/* // Route ajouter un annonce
 app.post("/ads", (req: Request, res: Response) => {
    //pour incrémenter et ajouter un id
     const id = ads.length + 1; 
@@ -70,7 +81,29 @@ app.post("/ads", (req: Request, res: Response) => {
     // Renvoie la nouvelle annonce en réponse
     res.send(newAd);
 });
+ */
 
+// Route ajouter un annonce
+app.post("/ads", (req: Request, res: Response) => {
+    //pour incrémenter et ajouter un id
+     const id = ads.length + 1; 
+     // … spread opérateur, reprend toutes les propriétés + id dans le nouvel objet + une date de création
+     const newAd = { ...req.body, id, createdAt: new Date().toISOString() };
+
+     //avec sql   (requete sécurisée/préparée sans les ?)
+     db.run ( "INSERT INTO ad (title, description, owner, price, picture, localisation) VALUES ($title, $description, $owner, $price, $picture, $localisation)" , {
+        $title: req.body.title,
+        $description: req.body.description,
+        $owner: req.body.owner,
+        $price: req.body.price,
+        $picture: req.body.picture,
+        $localisation: req.body.localisation,
+        });
+        
+     // Renvoie la nouvelle annonce en réponse
+     res.send(newAd);
+ });
+ 
 // Route supprimer une annonce par son ID 
 //compare l'ID de chaque annonce (ad.id) avec l'ID spécifié à supprimer (idDelete)
 app.delete("/ads/:id", (req: Request, res: Response) => {
