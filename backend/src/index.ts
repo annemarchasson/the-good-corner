@@ -1,14 +1,21 @@
 // Importation Express.js et types Request/Response depuis package express
 import express, { Request, Response } from "express";
-import sqlite3 from "sqlite3";
-const db = new sqlite3.Database('good_corner');
+import "reflect-metadata";
+import ds from "./ds";
+import {Ad} from "./entities/ad";
+
+/*SIGNIGICATION DE🔻:
+Ancienne Couche de CODE que je garde pour comprendre l'évolution de mon code.*/
+
+//🔻import sqlite3 from "sqlite3";
+//🔻const db = new sqlite3.Database('good_corner');
 // application Express
 const app = express();
 // numéro de port (3000)
 const port = 3000;
 
 // Ad type TS
-type Ad = {
+/*🔻type Ad = {
     id: number;
     title: string;
     description: string;
@@ -18,9 +25,9 @@ type Ad = {
     location: string;
     createdAt: string;
 }
-
+ */
 // données factices
-let ads: Ad[] = [
+/*🔻 let ads: Ad[] = [
     {
         id: 1,
         title: "Bike to sell",
@@ -46,7 +53,7 @@ let ads: Ad[] = [
       createdAt: "2023-10-05T10:14:15.922Z",
   },
     // ... Autres annonces ...
-];
+]; */
 
 // gérer les données JSON
 app.use(express.json());
@@ -57,20 +64,22 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Route afficher les ads annonces
-/* app.get("/ads", (req: Request, res: Response) => {
+/*🔻 app.get("/ads", (req: Request, res: Response) => {
     res.send(ads);
 });
  */
 
 //Route Afficher ads
-app.get("/ads", (req, res) => {
-    db.all("SELECT * FROM ad", (err, rows) => {
-      if (!err) res.send(rows);
-      else res.sendStatus(500);
-    })
-  });
+app.get("/ads", async (req, res) => {
+    /*🔻db.all("SELECT * FROM ad", (err, rows) => {
+      if (!err) res.send(rows); */
+      try {
+        res.send(await Ad.find())
+      } catch (err) {
+      } res.sendStatus(500);
+    });
 
-/* // Route ajouter un annonce
+/*🔻
 app.post("/ads", (req: Request, res: Response) => {
    //pour incrémenter et ajouter un id
     const id = ads.length + 1; 
@@ -84,9 +93,17 @@ app.post("/ads", (req: Request, res: Response) => {
  */
 
 // Route ajouter un annonce
-app.post("/ads", (req: Request, res: Response) => {
+app.post("/ads", async (req: Request, res: Response) => { 
+   try {
+    const newAd = Ad.create(req.body);
+    res.send(await newAd.save());
+   } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+   }
+});
     
-     // … spread opérateur, reprend toutes les propriétés + id dans le nouvel objet + une date de création
+     /*🔻 // … spread opérateur, reprend toutes les propriétés + id dans le nouvel objet + une date de création
      const newAd = { ...req.body, createdAt: new Date().toISOString() };
 
      //avec sql   (requete sécurisée/préparée sans les ?)
@@ -102,12 +119,22 @@ app.post("/ads", (req: Request, res: Response) => {
         
      // Renvoie la nouvelle annonce en réponse
      res.send(newAd);
- });
+ }); */
  
 // Route supprimer une annonce par son ID 
 //compare l'ID de chaque annonce (ad.id) avec l'ID spécifié à supprimer (idDelete)
-app.delete("/ads/:id", (req: Request, res: Response) => {
-    const idDelete = parseInt(req.params.id, 10); // Récupère id
+app.delete("/ads/:id", async (req: Request, res: Response) => {
+  try {
+    const adToDelete = await Ad.findOneBy({ id: parseInt(req.params.id, 10) });
+    if (!adToDelete) return res.sendStatus(404);
+    await adToDelete.remove();
+    res.sendStatus(204);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+
+/*🔻const idDelete = parseInt(req.params.id, 10); // Récupère id
     const deletedAd = ads.find((ad) => ad.id === idDelete); // Trouve ad avec id correspondant à id de la requète (idDelete)
     if (!deletedAd) { // si pas deletedAd donc annonce pas trouvée 
         return res.sendStatus(404); // renvoie une réponse 404
@@ -116,12 +143,22 @@ app.delete("/ads/:id", (req: Request, res: Response) => {
         ads = ads.filter((ad) => ad.id !== idDelete);
         //variable ads est mise à jour avec la nouvelle liste qui ne contient pas l'annonce spécifiée pour la suppression via l'ID.
         res.status(204).send({ message: "Ad deleted" });
-    }
+    } */
 });
 
 // Route mettre à jour une annonce par ID 
-app.patch("/ads/:id", (req: Request, res: Response) => {
-    const idUpdate = parseInt(req.params.id, 10); // Récupère id
+app.patch("/ads/:id", async (req: Request, res: Response) => {
+  try {
+    const adToUpdate = await Ad.findOneBy({ id: parseInt(req.params.id, 10) });
+    if (!adToUpdate) return res.sendStatus(404);
+    await Ad.update(parseInt(req.params.id, 10), req.body);
+    await Ad.merge(adToUpdate, req.body);
+    res.send(await adToUpdate.save());
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+    /*🔻 const idUpdate = parseInt(req.params.id, 10); // Récupère id
     const indexOfUpdate = ads.findIndex((ad) => ad.id === idUpdate); // Trouve l'index de l'annonce à mettre à jour
     //Si l'index de l'annonce à mettre à jour n'est pas trouvé (c'est-à-dire indexOfUpdate est égal à -1). Dans une liste commencent généralement à partir de 0 et sont des nombres positifs. Donc, si on obtient -1, cela veut dire que l'annonce n'est pas dans la liste.
     if (indexOfUpdate === -1) {
@@ -133,17 +170,16 @@ app.patch("/ads/:id", (req: Request, res: Response) => {
         ...req.body, // on y ajoute la mise à jour via la requète
     };
     // Renvoie l'annonce mise à jour en réponse
-    res.send(ads[indexOfUpdate]);
+    res.send(ads[indexOfUpdate]); */
 });
 
 // Écoute le port spécifié et affiche un message lorsque le serveur démarre
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+app.listen(port, async () => {
+  await ds.initialize();
+  console.log(`Server running on http://localhost:${port}`);
 });
 
-
-/*
-correction sqlite
+/* 🔻
 app.post("/ads", (req: Request, res: Response) => {
   const newAd: Ad = {
     ...req.body,
@@ -219,7 +255,6 @@ app.patch("/ads/:id", (req: Request, res: Response) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
-*/
+
+ */
+

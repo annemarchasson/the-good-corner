@@ -102,7 +102,7 @@ ON UPDATE CASCADE; */
 ALTER TABLE `ad` ADD COLUMN `category_id` INTEGER;
 
 /*mettre à jour la colonne category_id dans table ad avec uniquement
-les id des trois catégories possible */
+les id des trois catégories possibles */
 UPDATE `ad` SET `category_id` = 1 WHERE `id` = 1;
 UPDATE `ad` SET `category_id` = 2 WHERE `id` = 3;
 UPDATE `ad` SET `category_id` = 3 WHERE `id` = 4;
