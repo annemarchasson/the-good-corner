@@ -4,7 +4,13 @@ import {
     Entity, 
     PrimaryGeneratedColumn,
     CreateDateColumn,
+    ManyToOne,
+    ManyToMany,
+    JoinTable,
   } from "typeorm";
+
+import {Category} from "./category";
+import { Tag } from "./tag";
 
   @Entity ()
   export class Ad extends BaseEntity {
@@ -24,5 +30,16 @@ import {
    location:string;
    @CreateDateColumn ({nullable: true})
    createdAt:string;
-  }
+
+   // une categry à plusieurs annonces
+   @ManyToOne(()=> Category, (category) => category.ads, {
+    cascade :true,
+    onDelete: "CASCADE",
+   })
+   category: Category;
   
+  // un tag peut etre sur plusieurs annonces
+  @ManyToMany (()=> Tag)
+  @JoinTable()
+  tags: Tag[];
+  }

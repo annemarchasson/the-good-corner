@@ -3,6 +3,8 @@ import express, { Request, Response } from "express";
 import "reflect-metadata";
 import ds from "./ds";
 import {Ad} from "./entities/ad";
+import { Category } from "./entities/category";
+import { Tag } from "./entities/tag";
 
 /*SIGNIGICATION DE🔻:
 Ancienne Couche de CODE que je garde pour comprendre l'évolution de mon code.*/
@@ -74,7 +76,12 @@ app.get("/ads", async (req, res) => {
     /*🔻db.all("SELECT * FROM ad", (err, rows) => {
       if (!err) res.send(rows); */
       try {
-        res.send(await Ad.find())
+        res.send(await Ad.find({
+          relations: {
+            category:true,
+            tags:true,
+          },
+        }))
       } catch (err) {
       } res.sendStatus(500);
     });

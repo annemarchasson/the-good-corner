@@ -1,9 +1,9 @@
-import {DataSource} from "typeorm";
+import { DataSource } from "typeorm";
 
-export default new DataSource ({
-    type: "sqlite",
-    database: "../../good_corner_db.sqlite",
-    synchronize: true,
-    logging: true,
-    entities: ["src/entities/*.ts"],
-})
+export default new DataSource({
+  type: "sqlite",
+  database: "the_good_corner.sqlite",
+  entities: ["src/entities/*.ts"],
+  synchronize: true,
+  logging: true,
+});
