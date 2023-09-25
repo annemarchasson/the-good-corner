@@ -1,45 +1,54 @@
-import { 
-    BaseEntity, 
-    Column, 
-    Entity, 
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    ManyToOne,
-    ManyToMany,
-    JoinTable,
-  } from "typeorm";
-
-import {Category} from "./category";
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  Column,
+  ManyToOne,
+  JoinTable,
+  ManyToMany,
+} from "typeorm";
+import { Length, Min } from "class-validator";
+import { Category } from "./category";
 import { Tag } from "./tag";
 
-  @Entity ()
-  export class Ad extends BaseEntity {
-  @PrimaryGeneratedColumn ()
-    id:number;
-  @Column ({ length: 100 })
-   title:string;
-  @Column ({nullable: true, type: "text" })
-   description: string;
-  @Column () 
-   owner: string;
-  @Column ({type: "float" })
-   price:number;
-  @Column ({nullable: true})
-   picture:string;
-   @Column ({nullable: true})
-   location:string;
-   @CreateDateColumn ({nullable: true})
-   createdAt:string;
+@Entity()
+export class Ad extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-   // une categry à plusieurs annonces
-   @ManyToOne(()=> Category, (category) => category.ads, {
-    cascade :true,
+  @Column({ length: 50 })
+  @Length(5, 50, { message: "Le titre doit contenir entre 5 et 50 caractères" })
+  title: string;
+
+  @Column({ nullable: true, type: "text" })
+  description: string;
+
+  @Column()
+  owner: string;
+
+  @Column({ type: "float" })
+  @Min(0, { message: "le prix doit etre positif" })
+  price: number;
+
+  @Column()
+  location: string;
+
+  @Column()
+  picture: string;
+
+  @CreateDateColumn()
+  createdAt: string;
+
+  @ManyToOne(() => Category, (c) => c.ads, {
+    cascade: true,
     onDelete: "CASCADE",
-   })
-   category: Category;
-  
-  // un tag peut etre sur plusieurs annonces
-  @ManyToMany (()=> Tag)
+  })
+  category: Category;
+
   @JoinTable()
+  @ManyToMany(() => Tag, (t) => t.ads, {
+    cascade: true,
+  })
   tags: Tag[];
-  }
+}
