@@ -2,13 +2,13 @@ POST http://localhost:3000/ads
 Content-Type: application/json
 
  {
-      "title": "annonce2",
-      "description":
-        "My bike is blue, working fine. I'm selling it because I've got a new one",
-      "owner": "bike.seller@gmail.com",
-      "price": 100,
-      "picture":
-        "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
-      "location": "Paris"
-      
+      "title": "annonce7",
+      "description":"description annonce 5 ",
+      "owner": "jaki",
+      "price": 1001,
+      "picture":"https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png ",
+      "location": "rome",
+      "category": 2,
+      "tags": [{"id":1}]
     }
+    
