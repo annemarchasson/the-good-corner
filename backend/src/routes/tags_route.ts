@@ -18,7 +18,7 @@ router.get("/list", async (req: Request, res: Response) => {
 
   }
 });
-
+/*
 router.post("/create", async (req: Request, res: Response) => {
   try {
     const newTag = Tag.create(req.body);
@@ -45,4 +45,4 @@ router.delete("/delete/:id", async (req: Request, res: Response) => {
   }
 });
 
-export default router;
+export default router;*/

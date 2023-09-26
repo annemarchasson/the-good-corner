@@ -1,3 +1,3 @@
-export default interface IcreateCategory {
+export default interface ICreateCategory {
     name:string;
   }
