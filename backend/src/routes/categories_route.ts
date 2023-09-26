@@ -3,36 +3,29 @@ import CategoryService from "../services/category_service";
 import IcreateCategory from "../types/category";
 const router = Router();
 
-
 router.get("/list", async (_, res: Response) => {
   try {
-    /* const categories = await Category.find({
-      relations: {
-        ads: true,
-      },
-    });
-    res.send(categories); */
+    // Appel de la méthode "list" de CategoryService
     const categories = await CategoryService.list();
-
+    res.send(categories);
   } catch (err) {
-    console.log(err);
+    console.error(err); // Utilisez console.error pour les erreurs
     res.sendStatus(500);
   }
 });
 
 router.post("/create", async (req: Request, res: Response) => {
-
-  const data: IcreateCategory = req.body;
-  const newCategory = await new CategoryService().create({...data });
-  res.send(newCategory);
-} catch (err) {
-  console.log(err);
-  res.sendStatus(500);
-}
+  try {
+    const data: IcreateCategory = req.body;
+    // Créez une instance de CategoryService
+    const categoryService = new CategoryService();
+    // Appel de la méthode "create" de CategoryService
+    const newCategory = await categoryService.create({ ...data });
+    res.send(newCategory);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
 });
-
-
-
-
 
 export default router;

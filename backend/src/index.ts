@@ -6,7 +6,7 @@ import categoryRouter from "./routes/categories_route";
 import tagRouter from "./routes/tags_route";
 import adRouter from "./routes/ads_route";
 const app = express();
-const port = 3000;
+const port = 4000;
 
 app.use(express.json());
 app.use("/categories", categoryRouter);

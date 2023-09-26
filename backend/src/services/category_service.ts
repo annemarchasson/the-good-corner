@@ -1,6 +1,7 @@
 import { Category } from "../entities/category_entity";
+import { Repository } from "typeorm";
 import  DataSource  from "../db";
-
+import ICreateCategory from "../types/category";
 
 export default class CategoryService{
     db: Repository<Category>;
@@ -16,7 +17,9 @@ export default class CategoryService{
           });  
           return categories;  
     }
-    create(){
+    async create({name}: ICreateCategory){
+        const newCategory = this.db.create({name});
+        return await this.db.save(newCategory);
         
     }
     find(){
