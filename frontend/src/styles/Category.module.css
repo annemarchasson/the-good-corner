@@ -1,0 +1,28 @@
+.BarCategory {
+  display: flex;
+    justify-content: space-around;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    box-shadow: rgba(0, 0, 0, .15) 0 3px 5px 0;
+    color: #430f86;
+    cursor: pointer;
+    padding: 10px 25px;
+}
+
+.BarCategory :hover {
+  box-shadow: rgba(0, 0, 0, .15) 0 3px 9px 0;
+  transform: translateY(-2px);
+}
+
+.BarCategory a {
+  padding: 2px;
+  border-radius: 5px;
+}
+.CategoryId {
+  display: flex;
+    justify-content: space-around;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    box-shadow: rgba(0, 0, 0, .15) 0 3px 5px 0;
+    color:black;
+    cursor: pointer;
+    padding: 10px 25px;
+}

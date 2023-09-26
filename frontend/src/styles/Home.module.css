@@ -227,3 +227,17 @@
     transform: rotate(0deg);
   }
 }
+
+
+.titleExo {
+  color: blue;
+}
+
+.Bienvenue {
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 1.8em;
+  text-align: center;
+  padding: 10px;
+  font-weight: 400;
+  letter-spacing: 6px;
+}
