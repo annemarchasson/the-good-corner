@@ -1,10 +1,6 @@
 import Link from "next/link";
 import styles from 'src/styles/Category.module.css'
-
-interface Category {
-  id: number;
-  name: string;
-}
+import { Category } from "@/types/categories";
 const data: Category[] = [
   {
     id: 1,

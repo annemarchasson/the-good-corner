@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { Ad } from "../entities/ad_entity";
+import { Ad } from "../entities/ad.entity";
 import { In } from "typeorm";
 import { validate } from "class-validator";
 import AdService from "../services/ad_service";
@@ -34,11 +34,11 @@ router.get("/list", async (req: Request, res: Response) => {
 
 router.post("/create", async (req: Request, res: Response) => {
   try {
-    /* const newAd = Ad.create(req.body);
+    const newAd = Ad.create(req.body);
     const errors = await validate(newAd);
     if (errors.length !== 0) return res.status(422).send({ errors });
     const newAdWithId = await newAd.save();
-    res.send(newAdWithId); */
+    res.send(newAdWithId); 
   } catch (err) {
     console.log(err);
     res.sendStatus(500);

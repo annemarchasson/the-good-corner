@@ -1,12 +1,12 @@
 import { Router, Request, Response } from "express";
 import CategoryService from "../services/category_service";
-import IcreateCategory from "../types/category";
+import { ICreateCategory } from "../types/category";
 const router = Router();
 
 router.get("/list", async (_, res: Response) => {
   try {
     // Appel de la méthode "list" de CategoryService
-    const categories = await CategoryService.list();
+    const categories = await new CategoryService().list();
     res.send(categories);
   } catch (err) {
     console.error(err); // Utilisez console.error pour les erreurs
@@ -16,7 +16,7 @@ router.get("/list", async (_, res: Response) => {
 
 router.post("/create", async (req: Request, res: Response) => {
   try {
-    const data: IcreateCategory = req.body;
+    const data: ICreateCategory = req.body;
     // Créez une instance de CategoryService
     const categoryService = new CategoryService();
     // Appel de la méthode "create" de CategoryService

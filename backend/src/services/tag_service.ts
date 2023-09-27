@@ -1,20 +1,43 @@
-import { Tag } from "../entities/tag_entity";
-import { Like } from "typeorm";
-export default class TagService{
-    constructor(){
+import { Like, Repository } from "typeorm";
+import { Tag } from "../entities/tag.entity";
+import datasource from "../db";
+import { ICreatingTag } from "../types/tag";
+import { validate } from "class-validator";
 
+export default class TagService {
+  db: Repository<Tag>;
+
+  constructor() {
+    this.db = datasource.getRepository(Tag);
+  }
+
+  async list(name: string) {
+    const tags = await this.db.find({
+      where: { name: name ? Like(`%${name}%`) : undefined },
+    });
+    return tags;
+  }
+
+  async create(data: ICreatingTag) {
+    const newTag = this.db.create(data);
+    const errors = await validate(newTag);
+    if (errors.length !== 0) {
+      console.log("errors", errors);
+      // return res.status(422).send({ errors });
+      throw new Error("Une erreur s'est produite");
     }
-    static async list(name: string) {
-        console.log("Je suis dans ma méthode List de Tag")
-        const tags = await Tag.find({
-            where: { name: name ? Like(`%${name}%`) : undefined },
-          });
-          return tags;  
+
+    return await this.db.save(newTag);
+  }
+  async delete(id: number) {
+    const tagToDelete = await this.db.findOneBy({
+      id,
+    });
+    if (!tagToDelete) {
+      throw new Error("Ce tag n'existe pas");
     }
-    create(){
-        
-    }
-    find(){
-       
-    }
+    await this.db.remove(tagToDelete);
+
+    return tagToDelete;
+  }
 }

@@ -1,48 +1,40 @@
 import { Router, Request, Response } from "express";
-import { Tag } from "../entities/tag_entity";
 import { validate } from "class-validator";
 import TagService from "../services/tag_service";
+import {  ICreatingTag, IlistTag } from "../types/tag";
 const router = Router();
 
 router.get("/list", async (req: Request, res: Response) => {
   try {
-    const { name } = req.query;
-   /*  const tags = await Tag.find({
-      where: { name: name ? Like(`%${name}%`) : undefined },
-    }); */
-    const tags = await TagService.list(name as string);
+    const { name } = req.query as unknown as IlistTag;
+    const tags = await new TagService().list(name);
     res.send(tags);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
-
   }
 });
-/*
+
 router.post("/create", async (req: Request, res: Response) => {
   try {
-    const newTag = Tag.create(req.body);
-    const errors = await validate(newTag);
-    if (errors.length !== 0) return res.status(422).send({ errors });
-    res.send(await newTag.save());
-  } catch (err) {
+    // const data = req.body as ICreateTag;
+    const data:  ICreatingTag = req.body;
+    const newTag = new TagService().create({ ...data });
+    res.send(newTag);
+  } catch (err: any) {
     console.log(err);
-    res.sendStatus(500);
+    res.sendStatus(500).json({ message: err.message });
   }
 });
 
 router.delete("/delete/:id", async (req: Request, res: Response) => {
   try {
-    const tagToDelete = await Tag.findOneBy({
-      id: parseInt(req.params.id, 10),
-    });
-    if (!tagToDelete) return res.sendStatus(404);
-    await tagToDelete.remove();
-    res.sendStatus(204);
-  } catch (err) {
+    const tagToDelete = await new TagService().delete(+req.params.id);
+    res.sendStatus(204).json(tagToDelete);
+  } catch (err: any) {
     console.log(err);
-    res.sendStatus(500);
+    res.sendStatus(500).json({ message: err.message });
   }
 });
 
-export default router;*/
+export default router;
