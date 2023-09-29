@@ -1,7 +1,8 @@
-export interface IlistTag {
-    name:string;
-}
-
-export interface ICreatingTag {
-    name:string;
-}
+export interface IListTag {
+    name: string;
+    // ads: Ads[]
+  }
+  export interface ICreateTag {
+    name: string;
+    // ads: Ads[]
+  }

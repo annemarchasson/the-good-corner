@@ -2,9 +2,9 @@ import "reflect-metadata";
 import express from "express";
 import db from "./db";
 
-import categoryRouter from "./routes/categories_route";
-import tagRouter from "./routes/tags_route";
-import adRouter from "./routes/ads_route";
+import categoryRouter from "./routes/categories.route";
+import tagRouter from "./routes/tags.route";
+import adRouter from "./routes/ads.route";
 import cors from "cors";
 
 const app = express();

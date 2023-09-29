@@ -1,18 +1,15 @@
 import Card from "@/components/categories/Card";
+import axiosInstance from "@/lib/axiosInstance";
 import styles from "@/styles/Category.module.css";
 import { Category } from "@/types/categories";
-import axios from "axios";
 import { useEffect, useState } from "react";
 
 function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
   useEffect(() => {
-    // fetch("http://localhost:4000/categories/list")
-    //   .then((response) => response.json())
-    //   .then((data) => setCategories(data));
 
-    axios
-      .get<Category[]>("http://localhost:4000/categories/list")
+    axiosInstance
+      .get<Category[]>("/categories/list")
       .then(({ data }) => setCategories(data));
   }, []);
   return (
