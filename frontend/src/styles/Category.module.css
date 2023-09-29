@@ -26,3 +26,31 @@
     cursor: pointer;
     padding: 10px 25px;
 }
+.card {
+  display: flex;
+  border: 1px solid black;
+  height: 5rem;
+  width: 5rem;
+  align-items: center;
+  justify-content: center;
+  margin: 2px;
+  font-size: 0.8rem;
+}
+.card:hover{
+  background-color: #e8e8e8;
+}
+.cardText{
+  text-align: center;
+}
+
+.cardBloc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 1rem;
+}
+.cardBloc > a {
+  text-decoration: none;
+  color: #384a68
+}

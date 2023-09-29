@@ -1,19 +1,27 @@
-import React from "react";
+import Card from "@/components/categories/Card";
+import axiosInstance from "@/lib/axiosInstance";
+import styles from "@/styles/Category.module.css";
+import { Category } from "@/types/categories";
+import { useEffect, useState } from "react";
 
 function Categories() {
-  return <div>Liste des catégories</div>;
-}
+  const [categories, setCategories] = useState<Category[]>([]);
+  useEffect(() => {
 
-
-
-Categories.getLayout = function getLayout(page: any) {
+    axiosInstance
+      .get<Category[]>("/categories/list")
+      .then(({ data }) => setCategories(data));
+  }, []);
   return (
     <div>
-      <h1>Liste</h1>
-      <nav>Navbar</nav>
-      {page}
-      <footer>Footer</footer>
+      Liste des catégories
+      <div className={styles.cardBloc}>
+        {categories.map((c) => (
+          <Card key={c.id} id={c.id} name={c.name} />
+        ))}
+      </div>
     </div>
   );
-};
+}
+
 export default Categories;

@@ -1,7 +1,7 @@
 import db from "./db";
-import { Ad } from "./entities/ad_entity";
-import { Category } from "./entities/category_entity";
-import { Tag } from "./entities/tag_entity";
+import { Ad } from "./entities/ad.entity";
+import { Category } from "./entities/category.entity";
+import { Tag } from "./entities/tag.entity";
 
 async function clearDB() {
   const runner = db.createQueryRunner();
