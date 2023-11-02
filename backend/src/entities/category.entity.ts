@@ -1,18 +1,30 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Ad } from "./ad.entity";
+import { Field, ID, InputType, ObjectType } from "type-graphql";
 
-// Définition de l'entité "Category" qui représente une catégorie d'annonces
+@ObjectType()
 @Entity()
 export class Category {
-  // Clé primaire générée automatiquement
+  
+  @Field(type => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
-  // Nom de la catégorie
+  @Field()
   @Column()
   name: string;
 
-  // Relation OneToMany avec les annonces liées à cette catégorie
+  @Field(() => [Ad])
   @OneToMany(() => Ad, (ad) => ad.category)
   ads: Ad[];
+}
+
+
+/**============================================
+ *?               Inputs
+ *=============================================**/
+@InputType()
+export class CreateCategoryInput {
+  @Field()
+  name: string
 }
