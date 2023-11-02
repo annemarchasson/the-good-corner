@@ -12,59 +12,140 @@ import {
 import { Length, Min } from "class-validator";
 import { Category } from "./category.entity";
 import { Tag } from "./tag.entity";
+import { Field, Float, ID, InputType, ObjectType } from "type-graphql";
 
-// Définition de l'entité "Ad" qui représente une annonce
+@ObjectType()
 @Entity()
-export class Ad extends BaseEntity {
-  // Clé primaire générée automatiquement
+export class Ad {
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
-  // Titre de l'annonce avec validation de longueur
+  @Field()
   @Column({ length: 50 })
   @Length(5, 50, { message: "Le titre doit contenir entre 5 et 50 caractères" })
   title: string;
 
-  // Description de l'annonce (optionnelle)
+  @Field({ nullable: true })
   @Column({ nullable: true, type: "text" })
   description: string;
 
-  // Propriétaire de l'annonce
+  @Field()
   @Column()
   owner: string;
 
-  // Prix de l'annonce avec validation de valeur minimale
+  @Field()
   @Column({ type: "float" })
-  @Min(0, { message: "Le prix doit être positif" })
+  @Min(0, { message: "le prix doit etre positif" })
   price: number;
 
-  // Localisation de l'annonce
+  @Field()
   @Column()
   location: string;
 
-  // Chemin vers l'image associée à l'annonce
+  @Field()
   @Column()
   picture: string;
 
-  // Date de création de l'annonce (gérée automatiquement)
+  @Field()
   @CreateDateColumn()
   createdAt: string;
-  
-  // Date de mise à jour de l'annonce (gérée automatiquement)
+
+  @Field()
   @UpdateDateColumn()
   updatedAt: string;
 
-  // Relation ManyToOne avec la catégorie de l'annonce
+  @Field(() => Category)
   @ManyToOne(() => Category, (c) => c.ads, {
     cascade: true,
     onDelete: "CASCADE",
   })
   category: Category;
 
-  // Relation ManyToMany avec les tags associés à l'annonce
+  // @Field(() => [Tag])
   @JoinTable()
   @ManyToMany(() => Tag, (t) => t.ads, {
     cascade: true,
   })
   tags: Tag[];
+}
+
+@ObjectType()
+export class AdDeleted {
+  @Field()
+  title: string;
+
+  @Field({ nullable: true })
+  description: string;
+
+  @Field()
+  owner: string;
+
+  @Field()
+  price: number;
+
+  @Field()
+  location: string;
+
+  @Field()
+  picture: string;
+
+  @Field()
+  createdAt: string;
+
+  @Field()
+  updatedAt: string;
+
+  @Field(() => Category)
+  category: Category;
+
+  // @Field(() => [Tag])
+  // tags: Tag[];
+}
+
+/**============================================
+ *?               Inputs
+ *=============================================**/
+
+@InputType()
+export class PartialCategoryInput {
+  @Field(() => ID)
+  id: string;
+}
+@InputType()
+export class CreateAdInput {
+  @Field()
+  title: string;
+  @Field()
+  description: string;
+  @Field()
+  owner: string;
+  @Field(() => Float)
+  price: number;
+  @Field()
+  location: string;
+  @Field()
+  picture: string;
+  @Field()
+  category: PartialCategoryInput;
+}
+
+@InputType()
+export class UpdateAdInput {
+  @Field(()=> ID)
+  id: string
+  @Field({nullable: true})
+  title: string
+  @Field({nullable: true})
+  description: string
+  @Field({nullable: true})
+  owner: string
+  @Field({nullable: true})
+  price: number
+  @Field({nullable: true})
+  location: string
+  @Field({nullable: true})
+  picture: string
+  @Field({nullable: true})
+  category: PartialCategoryInput
 }

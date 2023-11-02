@@ -1,48 +1,46 @@
-// Importation des modules nécessaires
-import AE from "aggregate-error";
+import AE from "aggregate-error"; // rassembler erreurs en une seule erreur
 import { ValidationError } from "class-validator";
 import { TypeORMError } from "typeorm";
 
-// Interface pour définir la structure d'une erreur personnalisée
+// structures de données
 interface IError extends Error {
   field: string | null;
   message: string;
 }
 
-// Définir un type personnalisé pour AggregateError
-type CustomAggregateError = AE<IError>;
+//formatage des erreurs venant de class-validator
+export function aggregateErrors(
+  errors: ValidationError[]
 
-// Fonction pour agréger les erreurs provenant de class-validator et les formater
-export function aggregateErrors(errors: ValidationError[]): any {
-  const errorsFormatted = errors.map((error) => {
+): any {
+  const errorsFormated = errors.map((error) => {
     console.log("ERROR DE VALIDATION : ", error);
     if (error.constraints) {
-      const key = Object.keys(error?.constraints || {})[0]; // Récupération de la première contrainte d'erreur
+          // Si des contraintes existent dans erreur
+      // const key = Object.keys(error.constraints); // "min"
+      const key = Object.keys(error?.constraints || {})[0]; // "min" Obtenir la première contrainte
       console.log("KEY =============>", key);
       console.log("PROPERTY", error.property);
       return {
         field: error.property,
-        message: error.constraints[key], // Récupération du message d'erreur correspondant à la contrainte
+        message: error.constraints[key], //error.contraints["min"]  Extraire message contrainte
       };
     } else {
-      return {};
+      return {}; //objet vide si aucune contrainte
     }
   });
-  console.log("ERROR FORMATED =====>", errorsFormatted);
-  return errorsFormatted;
+  return errorsFormated;
 }
-
-// Fonction pour formater les erreurs en un objet standard
-export function formatedErrors(err: CustomAggregateError | TypeORMError) {
-  console.log("ERROR ====>", err);
-  console.log("ERROR NAME ===>", err.name);
+ //formater les erreurs globales
+export function formatedErrors(err: AggregateError | TypeORMError) {
   const e: any = {
     errors: [],
   };
 
   if (err.name === "AggregateError") {
-    const aggregateError = err as CustomAggregateError;
-    e.errors = aggregateError.errors; 
+    // Si erreur est de type AggregateError
+    const aggregateError = err as AE<IError>;
+    e.errors = aggregateError.errors;
   }
 
   return e;
